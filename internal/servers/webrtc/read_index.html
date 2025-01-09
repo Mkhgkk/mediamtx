@@ -504,7 +504,12 @@
       const onError = (err) => {
         if (restartTimeout === null) {
           window.parent.postMessage(
-            { type: "error", message: err, streamId },
+            {
+              type: "error",
+              message: err,
+              streamId,
+              target: "mediamtx-webrtc-inpage",
+            },
             "*"
           );
           setMessage(err + ", retrying in some seconds");
@@ -654,7 +659,12 @@
 
       const onTrack = (evt) => {
         window.parent.postMessage(
-          { type: "streaming", message: "ok", streamId },
+          {
+            type: "streaming",
+            message: "ok",
+            streamId,
+            target: "mediamtx-webrtc-inpage",
+          },
           "*"
         );
         setMessage("");

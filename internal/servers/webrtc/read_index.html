@@ -69,6 +69,14 @@
       let queuedCandidates = [];
       let defaultControls = false;
 
+      const extractStreamId = () => {
+        const pathSegments = window.location.pathname.split("/");
+        const streamId = pathSegments.filter(Boolean).pop();
+        return streamId || "default";
+      };
+
+      let streamId = extractStreamId();
+
       const setMessage = (str) => {
         if (str !== "") {
           video.controls = false;
@@ -495,6 +503,10 @@
 
       const onError = (err) => {
         if (restartTimeout === null) {
+          window.parent.postMessage(
+            { type: "error", message: err, streamId },
+            "*"
+          );
           setMessage(err + ", retrying in some seconds");
 
           if (pc !== null) {
@@ -641,6 +653,10 @@
       };
 
       const onTrack = (evt) => {
+        window.parent.postMessage(
+          { type: "streaming", message: "ok", streamId },
+          "*"
+        );
         setMessage("");
         video.srcObject = evt.streams[0];
       };
